@@ -9,9 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      #  Validar descrição da PR
       - name: Check PR description
         uses: actions/github-script@v7
         with:
@@ -19,24 +20,36 @@ jobs:
             const body = context.payload.pull_request.body || "";
 
             if (!body.includes("## Description")) {
-              core.setFailed("Missing Description section.");
+              core.setFailed("Missing 'Description' section.");
             }
 
             if (!body.includes("## Checklist")) {
-              core.setFailed("Missing Checklist section.");
+              core.setFailed("Missing 'Checklist' section.");
             }
 
+            if (!body.includes("## Related Issue")) {
+              core.setFailed("Missing 'Related Issue' section.");
+            }
+
+      #  Validar checklist
       - name: Check checklist completion
         uses: actions/github-script@v7
         with:
           script: |
             const body = context.payload.pull_request.body || "";
-            if (body.match(/- \[ \]/g)) {
-              core.setFailed("Checklist not completed.");
+            const unchecked = body.match(/- \[ \]/g);
+
+            if (unchecked) {
+              core.setFailed("All checklist items must be completed.");
             }
 
+      #  Validar se mexeu na pasta correta do grupo
       - name: Validate group folder changes
         run: |
+          echo "Fetching base branch..."
+          git fetch origin main
+
+          echo "Checking changed files..."
           files=$(git diff --name-only origin/main...HEAD)
 
           echo "Changed files:"
@@ -45,13 +58,25 @@ jobs:
           group=$(echo "$files" | grep -o 'groups/group-[0-9]\+' | head -n 1)
 
           if [ -z "$group" ]; then
-            echo "No group folder detected!"
+            echo "ERROR: No group folder detected!"
             exit 1
           fi
 
           invalid=$(echo "$files" | grep -v "$group")
 
           if [ ! -z "$invalid" ]; then
-            echo "You modified files outside your group folder!"
+            echo "ERROR: You modified files outside your group folder!"
+            exit 1
+          fi
+
+      #  Validar padrão da branch
+      - name: Validate branch name
+        run: |
+          branch="${{ github.head_ref }}"
+
+          echo "Branch name: $branch"
+
+          if [[ ! "$branch" =~ ^group-[0-9]+-.*$ ]]; then
+            echo "ERROR: Branch name must follow pattern 'group-XX-description'"
             exit 1
           fi
