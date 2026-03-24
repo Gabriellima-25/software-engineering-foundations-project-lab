@@ -37,7 +37,7 @@ jobs:
 
       - name: Validate group folder changes
         run: |
-          files=$(git diff --name-only origin/main)
+          files=$(git diff --name-only origin/main...HEAD)
 
           echo "Changed files:"
           echo "$files"
