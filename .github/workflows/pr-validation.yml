@@ -9,36 +9,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository (full history)
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # ----------------------------
-      # Validate PR description
-      # ----------------------------
-      - name: Check PR description
+      - name: Validate PR description
         uses: actions/github-script@v7
         with:
           script: |
             const body = context.payload.pull_request.body || "";
 
             if (!body.includes("## Description")) {
-              core.setFailed("Missing '## Description' section.");
+              core.setFailed("Missing '## Description'");
             }
 
             if (!body.includes("## Checklist")) {
-              core.setFailed("Missing '## Checklist' section.");
+              core.setFailed("Missing '## Checklist'");
             }
 
             if (!body.includes("## Related Issue")) {
-              core.setFailed("Missing '## Related Issue' section.");
+              core.setFailed("Missing '## Related Issue'");
             }
 
-      # ----------------------------
-      # Validate checklist completion
-      # ----------------------------
-      - name: Check checklist completion
+      - name: Validate checklist
         uses: actions/github-script@v7
         with:
           script: |
@@ -46,68 +35,45 @@ jobs:
             const unchecked = body.match(/- \[ \]/g);
 
             if (unchecked) {
-              core.setFailed("All checklist items must be completed.");
+              core.setFailed("Checklist not completed");
             }
 
-      # ----------------------------
-      # Validate changed files (ROBUST FIX)
-      # ----------------------------
-      - name: Validate group folder changes
-        run: |
-          echo "Fetching all history..."
-          git fetch --all --prune
-
-          BASE_SHA=${{ github.event.pull_request.base.sha }}
-          HEAD_SHA=${{ github.event.pull_request.head.sha }}
-
-          echo "Base SHA: $BASE_SHA"
-          echo "Head SHA: $HEAD_SHA"
-
-          echo "Detecting changed files..."
-
-          # Try using PR SHAs (ideal case)
-          files=$(git diff --name-only $BASE_SHA $HEAD_SHA 2>/dev/null || true)
-
-          # Fallback 1: use last commit
-          if [ -z "$files" ]; then
-            echo "Fallback: HEAD~1"
-            files=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)
-          fi
-
-          # Fallback 2: list all files changed in PR (safe fallback)
-          if [ -z "$files" ]; then
-            echo "Fallback: git show"
-            files=$(git show --name-only --pretty="" HEAD)
-          fi
-
-          echo "Changed files:"
-          echo "$files"
-
-          # Validate group folder
-          group=$(echo "$files" | grep -o 'groups/group-[0-9]\+' | head -n 1)
-
-          if [ -z "$group" ]; then
-            echo "ERROR: No group folder detected!"
-            exit 1
-          fi
-
-          invalid=$(echo "$files" | grep -v "$group")
-
-          if [ ! -z "$invalid" ]; then
-            echo "ERROR: You modified files outside your group folder!"
-            exit 1
-          fi
-
-      # ----------------------------
-      # Validate branch naming
-      # ----------------------------
       - name: Validate branch name
         run: |
           branch="${{ github.head_ref }}"
 
-          echo "Branch name: $branch"
-
           if [[ ! "$branch" =~ ^group-[0-9]+-.*$ ]]; then
-            echo "ERROR: Branch name must follow pattern 'group-XX-description'"
+            echo "Branch must be: group-XX-description"
             exit 1
           fi
+
+      - name: Validate changed files location (API SAFE)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request.number;
+
+            const files = await github.paginate(
+              github.rest.pulls.listFiles,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr
+              }
+            );
+
+            const paths = files.map(f => f.filename);
+
+            console.log("Files:", paths);
+
+            const groupFolder = paths.find(p => p.startsWith("groups/group-"));
+
+            if (!groupFolder) {
+              core.setFailed("Files must be inside groups/group-XX/");
+            }
+
+            const invalid = paths.filter(p => !p.startsWith(groupFolder.split('/').slice(0,2).join('/')));
+
+            if (invalid.length > 0) {
+              core.setFailed("Files outside group folder detected");
+            }
