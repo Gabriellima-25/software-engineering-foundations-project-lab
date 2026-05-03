@@ -21,8 +21,8 @@ O sistema FireSeeker é uma plataforma web que permite a detecção e monitorame
 
 ## 2. Functional Requirements (Requisitos Funcionais)
 
-FR01 - Permitir o cadastro de usuários com diferentes perfis de acesso (administrador, operador, visualizador).
-FR02 - Permitir o login com autenticação por e-mail e senha.
+- FR01 - Permitir o cadastro de usuários com diferentes perfis de acesso (administrador, operador, visualizador).
+- FR02 - Permitir o login com autenticação por e-mail e senha.
 FR03 - Permitir o cadastro, edição e exclusão de produtos com nome, código SKU, categoria, unidade de medida e descrição.
 FR04 - Registrar entradas e saídas de estoque com data, quantidade e responsável.
 FR05 - Exibir o saldo atual de cada produto em tempo real.
