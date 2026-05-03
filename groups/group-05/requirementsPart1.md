@@ -19,6 +19,17 @@ Gestores de microempresas que desejam substituir controles manuais ou planilhas
 
 Equipes de estoque com múltiplos operadores e necessidade de controle de acesso
 
+
+### Problema resolvido
+
+Ruptura de estoque por falta de monitoramento em tempo real
+
+Excesso de mercadoria parada por ausência de análise de giro de produtos
+
+Falta de rastreabilidade nas movimentações (quem fez, quando e quanto)
+
+Dificuldade em integrar controle de estoque com operações de e-commerce
+
 ---
 
 ## 2. Functional Requirements (Requisitos Funcionais)
