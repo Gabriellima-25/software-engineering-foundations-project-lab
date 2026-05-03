@@ -42,10 +42,10 @@
 
 ## Considerações Finais
 
-Este documento deve ser:
+Este documento deve ser tratado como referência central ao longo de todo o ciclo de desenvolvimento. Para garantir sua efetividade, é importante que ele seja:
 
-- Claro e organizado
-- Fácil de entender por qualquer membro da equipe
-- Utilizado como base para desenvolvimento e testes
+- Claro e organizado — redigido de forma que qualquer membro da equipe consiga compreender o escopo do sistema.
+- Fácil de entender por qualquer membro da equipe — independente de sua área de atuação (desenvolvimento, design, negócios).
+- Utilizado como base para desenvolvimento e testes — servindo de referência tanto para a implementação quanto para a validação e homologação do sistema.
+- Versionado e atualizado — mantido com registro das alterações a cada mudança de escopo aprovada.
 
- Um bom documento de requisitos evita retrabalho e garante qualidade no projeto.
