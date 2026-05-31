@@ -5,17 +5,55 @@
 ##  1. Introdução
 
 ### 1.1 Objetivo
-Descrever o objetivo deste documento e do sistema.
+O objetivo deste documento é apresentar de forma estruturada, clara, objetiva e completa os requisitos do sistema StockFácil. Ele serve como a referência central e base formal para as equipes de desenvolvimento, design, negócios, testes e validação ao longo de todo o ciclo de vida do software.
 
 ### 1.2 Escopo
-Descrever o que o sistema faz, seus limites e o que está fora do escopo.
+O que o sistema faz: O StockFácil é uma plataforma web e mobile voltada para o gerenciamento de estoque em tempo real de pequenas empresas e e-commerces do setor varejista. O sistema centraliza o controle de produtos, rastreia entradas e saídas (identificando quantidade, data e operador responsável), exibe saldos atualizados, emite alertas automáticos de estoque mínimo, gera relatórios por período/categoria, gerencia múltiplos locais de armazenamento e fornece um dashboard visual com indicadores gerais para tomada de decisão.
+Limites do sistema: O sistema é projetado para operar inteiramente sob infraestrutura web moderna, sendo compatível com os principais navegadores (Chrome, Firefox, Edge e Safari) sem a necessidade de instalação de softwares locais. Ele foi dimensionado para suportar até 500 usuários simultâneos e gerenciar um volume inicial de até 10.000 itens ativos por empresa.
+Fora de escopo (O que não faz): Por se tratar de um projeto de contexto acadêmico com prazo de execução de 8 semanas, o escopo é estritamente limitado à gestão de inventário. Estão explicitamente fora de escopo nesta versão:
+- Módulos de faturamento e gestão financeira.
+- Sistemas e fluxos de fechamento de vendas.
+- Integrações diretas com marketplaces ou plataformas externas de e-commerce.
+- Integração com sistemas legados complexos ou ERPs corporativos.
 
 ### 1.3 Definições, Acrônimos e Abreviações
-Liste termos importantes utilizados no documento.
+Para garantir o alinhamento de toda a equipe e facilitar a leitura deste documento, definem-se os seguintes termos: 
+
+•	API (Application Programming Interface): Conjunto de rotinas e padrões de programação para acesso a um aplicativo de software ou plataforma baseado na Web.
+•	Backend: Camada do sistema que lida com a lógica de negócios, segurança, processamento de dados e comunicação com o banco de dados.
+•	CNPJ (Cadastro Nacional da Pessoa Jurídica): Número único que identifica uma pessoa jurídica perante a Receita Federal do Brasil.
+•	CSV (Comma-Separated Values): Formato de arquivo de texto simples onde os dados são separados por vírgulas, amplamente utilizado para importar e exportar planilhas.
+•	Dashboard: Painel visual que centraliza e exibe indicadores-chave de desempenho (KPIs) e métricas importantes de forma simplificada. 
+•	E-commerce: Comércio eletrônico; modalidade de comércio onde as transações de compra e venda ocorrem inteiramente de forma digital e online. 
+•	ERP (Enterprise Resource Planning): Sistema de gestão integrado que unifica as informações e processos de diferentes departamentos de uma empresa.
+•	Frontend: Interface visual e interativa do sistema com a qual o usuário final interage diretamente no navegador ou celular. 
+•	FR (Functional Requirement / Requisito Funcional): Declaração das funções e serviços que o sistema deve fornecer obrigatoriamente. 
+•	HTTPS (Hypertext Transfer Protocol Secure): Protocolo de comunicação de internet que protege a integridade e a confidencialidade dos dados entre o computador do usuário e o site. 
+•	LGPD (Lei Geral de Proteção de Dados): Legislação brasileira (Lei nº 13.709/2018) que regula as atividades de tratamento de dados pessoais para proteger a privacidade dos cidadãos. 
+•	NFR (Non-Functional Requirement / Requisito Não Funcional): Restrição sobre os serviços ou funções oferecidos pelo sistema, envolvendo critérios de desempenho, segurança e usabilidade. 
+•	Ruptura de Estoque: Situação comercial em que a quantidade de um determinado produto em estoque chega a zero, impossibilitando o atendimento da demanda de vendas. 
+•	SKU (Stock Keeping Unit): Código identificador único de um produto, utilizado para rastreamento e controle logístico de estoque. 
+•	TLS (Transport Layer Security): Protocolo de segurança que criptografa comunicações na internet para evitar interceptações de dados. 
+•	Varejo: Modalidade de venda direta de produtos em pequenas quantidades ao consumidor final. 
+•	WCAG 2.1 AA (Web Content Accessibility Guidelines): Diretrizes de acessibilidade para conteúdo web que visam tornar as aplicações mais acessíveis a pessoas com deficiência. 
+
 
 ---
 
 ##  2. Product Vision
+Declaração de Posição do Produto:
+O StockFácil é um aplicativo web e mobile desenvolvido especificamente para o gerenciamento de estoque de pequenas empresas e e-commerces varejistas. Diferente de planilhas manuais ou processos desorganizados e suscetíveis a erros, a plataforma permite registrar e monitorar todas as movimentações de produtos em tempo real, integrando alertas e relatórios gerenciais em um ambiente intuitivo e seguro. 
+Problema Resolvido:
+O produto foi projetado para mitigar as principais dores enfrentadas por pequenos lojistas na gestão de seus inventários, resolvendo especificamente: 
+•	Ruptura de estoque: Evita a perda de vendas causada pela falta de monitoramento em tempo real, notificando os gestores antes que o produto acabe. 
+•	Excesso de mercadoria parada: Reduz o capital imobilizado desnecessariamente ao sanar a ausência de análises sobre o giro de produtos. 
+•	Falta de rastreabilidade: Elimina o ponto cego operacional ao registrar detalhadamente quem realizou cada movimentação, quando ela ocorreu e qual foi a quantidade alterada. 
+•	Descentralização de canais: Soluciona a dificuldade latente de integrar o controle de estoque físico com as operações dinâmicas do e-commerce. 
+Público-Alvo e Usuários:
+O sistema foi concebido para atender às necessidades dos seguintes perfis do ecossistema de varejo: 
+•	Pequenos Comerciantes: Empreendedores que gerenciam lojas físicas, virtuais (e-commerce) ou operações híbridas. 
+•	Gestores e Diretores de Microempresas: Tomadores de decisão que buscam substituir de vez os controles manuais e planilhas por uma solução profissional. 
+•	Equipes de Logística e Operadores de Estoque: Múltiplos colaboradores que necessitam atualizar as entradas e saídas de mercadorias simultaneamente, demandando níveis de acesso controlados e seguros.
 
 ### 2.1 Problema
 Muitas empresas e pequenos negócios enfrentam dificuldades no controle de estoque interno, como falta de organização, erros manuais, perda de produtos, dificuldade em acompanhar entradas e saídas e ausência de dados em tempo real. Esses problemas podem gerar prejuízos financeiros, desperdício de recursos e baixa eficiência operacional.
