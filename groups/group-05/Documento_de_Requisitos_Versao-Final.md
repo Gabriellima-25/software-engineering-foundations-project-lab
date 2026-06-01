@@ -5,62 +5,35 @@
 ##  1. Introdução
 
 ### 1.1 Objetivo
-O objetivo deste documento é apresentar de forma estruturada, clara, objetiva e completa os requisitos do sistema StockFácil. Ele serve como a referência central e base formal para as equipes de desenvolvimento, design, negócios, testes e validação ao longo de todo o ciclo de vida do software.
-
+Este documento tem como objetivo descrever os requisitos funcionais e não funcionais do sistema StockFácil, um software web voltado à gestão de estoque de pequenas empresas e e-commerces varejistas. O sistema foi desenvolvido com foco na simplicidade de uso, permitindo que qualquer usuário opere a plataforma sem necessidade de treinamento prévio.
 ### 1.2 Escopo
-O que o sistema faz: O StockFácil é uma plataforma web e mobile voltada para o gerenciamento de estoque em tempo real de pequenas empresas e e-commerces do setor varejista. O sistema centraliza o controle de produtos, rastreia entradas e saídas (identificando quantidade, data e operador responsável), exibe saldos atualizados, emite alertas automáticos de estoque mínimo, gera relatórios por período/categoria, gerencia múltiplos locais de armazenamento e fornece um dashboard visual com indicadores gerais para tomada de decisão.
-Limites do sistema: O sistema é projetado para operar inteiramente sob infraestrutura web moderna, sendo compatível com os principais navegadores (Chrome, Firefox, Edge e Safari) sem a necessidade de instalação de softwares locais. Ele foi dimensionado para suportar até 500 usuários simultâneos e gerenciar um volume inicial de até 10.000 itens ativos por empresa.
-Fora de escopo (O que não faz): Por se tratar de um projeto de contexto acadêmico com prazo de execução de 8 semanas, o escopo é estritamente limitado à gestão de inventário. Estão explicitamente fora de escopo nesta versão:
-- Módulos de faturamento e gestão financeira.
-- Sistemas e fluxos de fechamento de vendas.
-- Integrações diretas com marketplaces ou plataformas externas de e-commerce.
-- Integração com sistemas legados complexos ou ERPs corporativos.
+O StockFácil é uma plataforma web que permite às empresas controlar o fluxo de estoque de forma digital e centralizada. O sistema contempla o cadastro de produtos, fornecedores e usuários, o registro de entradas e saídas, a geração de relatórios, alertas automáticos e um painel de indicadores em tempo real.
+Está fora do escopo deste sistema:
+- Emissão de notas fiscais ou integração com sistemas contábeis.
+- Funcionalidades de ponto de venda (PDV).
+- Gestão financeira ou contas a pagar/receber.
+- Integração nativa com plataformas de e-commerce de terceiros.
 
 ### 1.3 Definições, Acrônimos e Abreviações
 Para garantir o alinhamento de toda a equipe e facilitar a leitura deste documento, definem-se os seguintes termos: 
 
-•	API (Application Programming Interface): Conjunto de rotinas e padrões de programação para acesso a um aplicativo de software ou plataforma baseado na Web.
-•	Backend: Camada do sistema que lida com a lógica de negócios, segurança, processamento de dados e comunicação com o banco de dados.
-•	CNPJ (Cadastro Nacional da Pessoa Jurídica): Número único que identifica uma pessoa jurídica perante a Receita Federal do Brasil.
-•	CSV (Comma-Separated Values): Formato de arquivo de texto simples onde os dados são separados por vírgulas, amplamente utilizado para importar e exportar planilhas.
-•	Dashboard: Painel visual que centraliza e exibe indicadores-chave de desempenho (KPIs) e métricas importantes de forma simplificada. 
-•	E-commerce: Comércio eletrônico; modalidade de comércio onde as transações de compra e venda ocorrem inteiramente de forma digital e online. 
-•	ERP (Enterprise Resource Planning): Sistema de gestão integrado que unifica as informações e processos de diferentes departamentos de uma empresa.
-•	Frontend: Interface visual e interativa do sistema com a qual o usuário final interage diretamente no navegador ou celular. 
-•	FR (Functional Requirement / Requisito Funcional): Declaração das funções e serviços que o sistema deve fornecer obrigatoriamente. 
-•	HTTPS (Hypertext Transfer Protocol Secure): Protocolo de comunicação de internet que protege a integridade e a confidencialidade dos dados entre o computador do usuário e o site. 
-•	LGPD (Lei Geral de Proteção de Dados): Legislação brasileira (Lei nº 13.709/2018) que regula as atividades de tratamento de dados pessoais para proteger a privacidade dos cidadãos. 
-•	NFR (Non-Functional Requirement / Requisito Não Funcional): Restrição sobre os serviços ou funções oferecidos pelo sistema, envolvendo critérios de desempenho, segurança e usabilidade. 
-•	Ruptura de Estoque: Situação comercial em que a quantidade de um determinado produto em estoque chega a zero, impossibilitando o atendimento da demanda de vendas. 
-•	SKU (Stock Keeping Unit): Código identificador único de um produto, utilizado para rastreamento e controle logístico de estoque. 
-•	TLS (Transport Layer Security): Protocolo de segurança que criptografa comunicações na internet para evitar interceptações de dados. 
-•	Varejo: Modalidade de venda direta de produtos em pequenas quantidades ao consumidor final. 
-•	WCAG 2.1 AA (Web Content Accessibility Guidelines): Diretrizes de acessibilidade para conteúdo web que visam tornar as aplicações mais acessíveis a pessoas com deficiência. 
-
+- SKU: Stock Keeping Unit – código único de identificação de produto.
+- RF: Requisito Funcional.
+- RNF: Requisito Não Funcional.
+- CNPJ: Cadastro Nacional da Pessoa Jurídica.
+- Dashboard: Painel visual com indicadores e resumo de informações do sistema.
+- bcrypt: Algoritmo de hash criptográfico utilizado para armazenamento seguro de senhas.
+- TLS: Transport Layer Security – protocolo de criptografia de dados.
 
 ---
 
 ##  2. Product Vision
-Declaração de Posição do Produto:
-O StockFácil é um aplicativo web e mobile desenvolvido especificamente para o gerenciamento de estoque de pequenas empresas e e-commerces varejistas. Diferente de planilhas manuais ou processos desorganizados e suscetíveis a erros, a plataforma permite registrar e monitorar todas as movimentações de produtos em tempo real, integrando alertas e relatórios gerenciais em um ambiente intuitivo e seguro. 
-Problema Resolvido:
-O produto foi projetado para mitigar as principais dores enfrentadas por pequenos lojistas na gestão de seus inventários, resolvendo especificamente: 
-•	Ruptura de estoque: Evita a perda de vendas causada pela falta de monitoramento em tempo real, notificando os gestores antes que o produto acabe. 
-•	Excesso de mercadoria parada: Reduz o capital imobilizado desnecessariamente ao sanar a ausência de análises sobre o giro de produtos. 
-•	Falta de rastreabilidade: Elimina o ponto cego operacional ao registrar detalhadamente quem realizou cada movimentação, quando ela ocorreu e qual foi a quantidade alterada. 
-•	Descentralização de canais: Soluciona a dificuldade latente de integrar o controle de estoque físico com as operações dinâmicas do e-commerce. 
-Público-Alvo e Usuários:
-O sistema foi concebido para atender às necessidades dos seguintes perfis do ecossistema de varejo: 
-•	Pequenos Comerciantes: Empreendedores que gerenciam lojas físicas, virtuais (e-commerce) ou operações híbridas. 
-•	Gestores e Diretores de Microempresas: Tomadores de decisão que buscam substituir de vez os controles manuais e planilhas por uma solução profissional. 
-•	Equipes de Logística e Operadores de Estoque: Múltiplos colaboradores que necessitam atualizar as entradas e saídas de mercadorias simultaneamente, demandando níveis de acesso controlados e seguros.
 
 ### 2.1 Problema
 Muitas empresas e pequenos negócios enfrentam dificuldades no controle de estoque interno, como falta de organização, erros manuais, perda de produtos, dificuldade em acompanhar entradas e saídas e ausência de dados em tempo real. Esses problemas podem gerar prejuízos financeiros, desperdício de recursos e baixa eficiência operacional.
 
 ### 2.2 Solução
-Esse software permite que as empresas moonitorem o fluxo de extoque em tempo real, acompanhando as entradas e saídas de produtos. Além disso, pode gerar relatorios personalizados simples com base nesses dados, como listas de saldos atuais e resumo de movimentações, além de oferecer alertas altomaticos para estoque baixo do normal ou excessivo.
-
+O StockFácil permite que as empresas monitorem o fluxo de estoque em tempo real, acompanhando as entradas e saídas de produtos. Além disso, o sistema gera relatórios personalizados com base nesses dados como listas de saldos atuais e resumo de movimentações e oferece alertas automáticos para estoque abaixo do nível mínimo configurado ou acima do esperado.
 
 ### 2.3 Público-Alvo
 Os principais usuários do aplicativo serão:
@@ -71,26 +44,25 @@ Os principais usuários do aplicativo serão:
 -	Equipes de estoque com múltiplos operadores e necessidade de controle de acesso
 
 ### 2.4 Proposta de Valor
-É uma forma de pequenas empresas usarem sistemas mais avançados para acompanhar as entradas e saidas de produtos de forma mais pratica e visivel.
-
-Por que esse sistema é importante?
+O StockFácil oferece a pequenas empresas acesso a um sistema moderno e acessível para controle de estoque, substituindo planilhas desorganizadas e processos manuais por uma plataforma centralizada, visual e de fácil operação. O sistema entrega visibilidade em tempo real sobre os produtos, reduzindo perdas, evitando rupturas de estoque e aumentando a eficiência operacional.
 
 ### 2.5 Diferencial
-Um sistema mais simples de se ultilizar, sem a necessidade de treinamento para se usar o sistema.
-
-O que torna esse sistema melhor que outros?
+O principal diferencial do StockFácil é a simplicidade de uso. A interface foi projetada para ser intuitiva e autoexplicativa, dispensando treinamentos formais para a operação do dia a dia. Diferentemente de sistemas ERP complexos, o StockFácil foca exclusivamente na gestão de estoque, com fluxos simplificados e alertas proativos que apoiam a tomada de decisão mesmo por usuários sem experiência com software de gestão.
 
 ### 2.6 Funcionalidades principais (alto nível)
-- Funcionalidade 1
-- Funcionalidade 2
-
+- Cadastro e gestão de produtos com código SKU, categoria e unidade de medida.
+- Registro de entradas e saídas de estoque com histórico completo.
+- Dashboard com indicadores em tempo real: saldo total, produtos críticos e últimas movimentações.
+- Alertas automáticos de estoque mínimo e excesso.
+- Geração de relatórios por período, produto ou categoria.
+- Controle de acesso por perfis de usuário (administrador, operador, visualizador).
+- Importação e exportação de dados em CSV/Excel.
 ---
 
 ##  3. Visão Geral do Sistema
 
 ### 3.1 Descrição Geral
-O StockFácil é um aplicativo web e mobile para gestão de estoque de pequenas empresas e e-commerces varejistas. A plataforma permite registrar e monitorar movimentações de produtos em tempo real, com alertas de reposição e relatórios, substituindo planilhas manuais e processos desorganizados.
-Explique o sistema de forma resumida.
+O StockFácil é um aplicativo web para gestão de estoque de pequenas empresas e e-commerces varejistas. A plataforma permite registrar e monitorar movimentações de produtos em tempo real, com alertas de reposição e relatórios dinâmicos, substituindo planilhas manuais e processos desorganizados. O sistema é acessível via navegador web em dispositivos desktop e móveis, garantindo flexibilidade operacional para equipes de estoque.
 
 ### 3.2 Stakeholders
 Liste os principais envolvidos:
@@ -118,60 +90,113 @@ Liste os principais envolvidos:
 - FR14 - Registrar o custo de compra dos produtos para cálculo de valor total do estoque .
 - FR15 - Permitir a recuperação de senha via e-mail.
 
+**Detalhamento dos requisitos principais:**
 
-### RF01 - Nome do requisito
+### RF01 - Cadastro de usuario
 **Descrição:**  
-Descreva a funcionalidade.
+Permitir o cadastro de usuários com diferentes perfis de acesso (administrador, operador, visualizador).
 
-**Prioridade:** Alta / Média / Baixa  
-**Entradas:**  
-**Saídas:**  
-**Regras de negócio:**  
+**Prioridade:** Alta  
+**Entradas:** Nome completo, e-mail, senha, perfil de acesso selecionado. 
+**Saídas:** Usuário cadastrado e ativo no sistema, com permissões aplicadas conforme o perfil.
+**Regras de negócio:**
+Apenas administradores podem criar, editar ou excluir usuários. O e-mail deve ser único por conta. Não é possível excluir o último administrador ativo.
 
 ---
 
-### RF02 - Nome do requisito
-(repita o padrão)
+### RF03 - Cadastro de produtos
+**Descrição:**  
+O sistema deve permitir o cadastro, edição e exclusão de produtos, incluindo os campos: nome, código SKU, categoria, unidade de medida, descrição, quantidade mínima e custo de compra.
+
+**Prioridade:** Alta  
+**Entradas:** Nome do produto, SKU, categoria, unidade de medida, descrição, quantidade mínima, custo unitário.
+**Saídas:** Produto criado, editado ou removido do catálogo. Saldo inicial registrado.
+**Regras de negócio:**
+O código SKU deve ser único por empresa. A exclusão de produto só é permitida se não houver movimentações vinculadas. Somente administradores e operadores podem cadastrar ou editar produtos.
+
+---
+
+### RF04 - Registro de Entradas e Saídas
+**Descrição:**  
+O sistema deve permitir o registro de movimentações de estoque (entrada ou saída), informando o produto, a quantidade, a data e o usuário responsável. O saldo do produto deve ser atualizado automaticamente.
+
+**Prioridade:** Alta  
+**Entradas:** Tipo de movimentação (entrada/saída), produto, quantidade, data, observação opcional. 
+**Saídas:** Movimentação registrada, saldo atualizado em tempo real, histórico atualizado.
+**Regras de negócio:**
+Não é permitido registrar saída com quantidade superior ao saldo disponível. Movimentações não podem ser excluídas, apenas estornadas. O usuário responsável é registrado automaticamente pela sessão ativa.
+
+---
+
+### RF06 - Alertas Automáticos de Estoque
+**Descrição:**  
+Permitir o cadastro de usuários com diferentes perfis de acesso (administrador, operador, visualizador).
+
+**Prioridade:** Alta  
+**Entradas:** Nome completo, e-mail, senha, perfil de acesso selecionado. 
+**Saídas:** Usuário cadastrado e ativo no sistema, com permissões aplicadas conforme o perfil.
+**Regras de negócio:**
+Os limites mínimo e máximo são definidos individualmente por produto. Alertas repetidos para o mesmo produto não devem ser gerados mais de uma vez por hora.
+
+---
+
+### RF07 - Geração de Relatórios
+**Descrição:**  
+O sistema deve permitir a geração de relatórios de movimentação de estoque, podendo ser filtrados por período, produto ou categoria. Os relatórios devem ser exportáveis em PDF e CSV.
+
+**Prioridade:** Média
+**Entradas:** Filtros selecionados: período (data inicial e final), produto e/ou categoria.
+**Saídas:** Relatório exibido em tela e disponível para download em PDF ou CSV.
+**Regras de negócio:**
+Relatórios de períodos superiores a 12 meses devem exigir confirmação do usuário. Apenas administradores e visualizadores têm acesso à geração de relatórios completos.
+
+---
+
+### RF11 - Dashboard de Indicadores
+**Descrição:**  
+O sistema deve exibir um painel visual com os principais indicadores do estoque: total de itens cadastrados, produtos com estoque crítico (abaixo do mínimo), produtos com excesso, valor total do estoque e as últimas movimentações realizadas.
+
+**Prioridade:** Alta  
+**Entradas:** Dados consolidados do banco de dados em tempo real
+**Saídas:** Painel atualizado automaticamente com gráficos e números-chave do estoque.
+**Regras de negócio:**
+O dashboard deve ser a primeira tela exibida após o login. Deve ser carregado em no máximo 3 segundos. Os dados devem refletir o estado atual do estoque sem necessidade de atualização manual.
 
 ---
 
 ##  5. Requisitos Não Funcionais
-- NFR02 - O sistema deve suportar até 500 usuários simultâneos sem degradação de desempenho.
-- NFR03 - Todas as senhas devem ser armazenadas com criptografia (bcrypt ou equivalente).
-- NFR04 - As comunicações entre cliente e servidor devem ser feitas via HTTPS (TLS 1.2 ou superior).
-- NFR05 - O sistema deve registrar logs de acesso e ações críticas para auditoria.
-- NFR06 - A interface deve ser intuitiva e responsiva, adaptando-se a dispositivos móveis e desktop.
-- NFR07 - O sistema deve seguir padrões de acessibilidade WCAG 2.1 nível AA.
-- NFR08 - O sistema deve ter disponibilidade mínima de 99,5% ao mês (exceto manutenções programadas).
-- NFR09 - O código-fonte deve seguir padrões de clean code e ser documentado para facilitar manutenção.
-- NFR10 - A arquitetura deve permitir escalabilidade horizontal para aumento de usuários e volume de dados.
-- 
+
 ### 5.1 Usabilidade
 - O sistema deve ser totalmente responsivo, adaptando-se a dispositivos móveis, tablets e desktops.
 - O usuário deve conseguir registrar uma entrada ou saída de estoque em no máximo 3 cliques a partir do menu principal.
 - O sistema deve exibir mensagens de erro claras e orientações de correção sempre que uma ação falhar.
 - O dashboard principal deve apresentar os indicadores mais importantes de forma visual e de fácil interpretação.
+- O sistema deve seguir padrões de acessibilidade WCAG 2.1 nível AA.
 
 ---
 
 ### 5.2 Eficiência
-- Tempo de resposta < X segundos  
-- Suporte a múltiplos usuários  
+- O sistema deve responder a qualquer requisição do usuário em até 2 segundos em condições normais de uso.
+- O sistema deve suportar até 500 usuários simultâneos sem degradação de desempenho.
+- Operações de busca e filtro de produtos devem retornar resultados em menos de 1 segundo.
 
 ### 5.3 Desempenho
--	O sistema deve responder a qualquer requisição do usuário em até 2 segundos em condições normais de uso.
-- O sistema deve suportar até 500 usuários simultâneos sem degradação perceptível de desempenho.
+- •
 - O carregamento inicial do dashboard não deve ultrapassar 3 segundos em conexões de banda larga.
-- Operações de busca e filtro de produtos devem retornar resultados em menos de 1 segundo.
 - A geração de relatórios de até 12 meses de histórico deve ser concluída em no máximo 5 segundos.
+- O sistema deve processar o registro de uma movimentação e atualizar o saldo em menos de 1 segundo.
 
 ### 5.4 Espaço
-- Limite de armazenamento  
-- Uso eficiente de memória  
+- Cada empresa contratante terá uma cota inicial de armazenamento de até 5 GB para dados e históricos de movimentações.
+- Arquivos importados via CSV/Excel não devem ultrapassar 10 MB por operação.
+- O sistema deve utilizar compressão de dados e paginação para minimizar o consumo de memória nas consultas.
+- Logs de auditoria devem ser retidos por no mínimo 12 meses e arquivados automaticamente após esse período.
 
 ### 5.5 Confiabilidade
-- Disponibilidade mínima (ex: 99,9%)  
-- Recuperação de falhas  
+- O sistema deve ter disponibilidade mínima de 99,5% ao mês, exceto em manutenções programadas com aviso prévio.
+- Em caso de falha, o sistema deve se recuperar automaticamente sem perda de dados já confirmados.
+- Todas as operações críticas (registros de movimentação, alterações de cadastro) devem utilizar transações atômicas no banco de dados.
+- O sistema deve realizar backups automáticos diários dos dados com retenção de 30 dias.
 
 ### 5.6 Segurança (Proteção)
 - O sistema deve criptografar senhas utilizando algoritmo de hash seguro (bcrypt com salt).
@@ -179,23 +204,55 @@ Descreva a funcionalidade.
 - O sistema deve restringir o acesso às funcionalidades conforme o perfil do usuário (administrador, operador, visualizador).
 - Todas as comunicações devem ser realizadas via HTTPS (TLS 1.2 ou superior).
 - Tokens de sessão devem expirar após 8 horas de inatividade, exigindo novo login.
-- O sistema deve registrar logs de auditoria para ações críticas como exclusão de produtos e alterações de estoque.
+- O sistema deve registrar logs de auditoria para ações críticas, como exclusão de produtos e alterações de estoque.
 
 ---
 
 ##  6. Requisitos Organizacionais
 
 ### 6.1 Ambientais
-- Sistema operacional  
-- Infraestrutura  
+- •	O sistema deve ser hospedado em infraestrutura de nuvem (AWS, GCP ou Azure), utilizando serviços gerenciados de banco de dados e balanceamento de carga.
+- •	O ambiente de produção deve ser separado dos ambientes de desenvolvimento e homologação.
+- •	O sistema deve ser compatível com os navegadores Google Chrome, Mozilla Firefox, Microsoft Edge e Safari nas duas versões mais recentes.
+- •	O servidor de aplicação deve operar em Linux (Ubuntu 22.04 LTS ou superior).
 
 ### 6.2 Operacionais
-- Logs  
-- Monitoramento  
+- O sistema deve registrar logs de acesso, erros e ações críticas em formato estruturado (JSON) para facilitar a análise e auditoria.
+- Deve haver monitoramento contínuo de disponibilidade e desempenho, com alertas automáticos para a equipe de operações em caso de incidentes.
+- Manutenções programadas devem ser comunicadas com pelo menos 48 horas de antecedência e realizadas preferencialmente fora do horário comercial.
+- O sistema deve disponibilizar uma página de status pública informando a saúde dos serviços em tempo real.
 
 ### 6.3 Desenvolvimento
-- Versionamento (Git)  
-- Padrões de código  
-- Testes automatizados  
+- O versionamento do código-fonte deve ser realizado com Git, utilizando o modelo de branches GitFlow (main, develop, feature, hotfix).
+- O código deve seguir os padrões de clean code, com nomenclatura clara, funções com responsabilidade única e ausência de duplicação desnecessária.
+- Devem ser implementados testes automatizados unitários e de integração, com cobertura mínima de 80% nas funcionalidades críticas.
+- O processo de CI/CD deve garantir que todo código mesclado na branch principal seja validado automaticamente antes da implantação em produção.
+- A documentação técnica das APIs deve ser mantida atualizada utilizando o padrão OpenAPI (Swagger).
+
+---
+
+##  7. Requisitos Externos
+
+### 7.1 Reguladores
+- O sistema deve estar em conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018), garantindo que os dados pessoais dos usuários.
+- O sistema deve manter registros de consentimento e logs de acesso a dados pessoais para fins de auditoria regulatória.
+
+### 7.2 Éticos
+- O sistema não deve adotar qualquer mecanismo que discrimine usuários com base em raça, gênero, idade, localização ou qualquer outro fator pessoal no acesso às funcionalidades.
+- O sistema não deve coletar dados além do estritamente necessário para o funcionamento da plataforma.
+- Em caso de alterações nos termos de uso ou política de privacidade, os usuários devem ser notificados com antecedência e de forma clara.
+
+### 7.3 Legais
+- O sistema deve estar em conformidade com o Marco Civil da Internet (Lei nº 12.965/2014), respeitando as diretrizes de privacidade, neutralidade e responsabilidade no ambiente digital.
+- Os contratos de uso da plataforma devem estar alinhados ao Código de Defesa do Consumidor (Lei nº 8.078/1990), garantindo clareza nas condições de serviço.
+- O armazenamento e o tratamento de dados devem respeitar as legislações brasileiras vigentes sobre proteção de dados e segurança da informação.
+
+### 7.4 Segurança Externa
+- O sistema deve possuir mecanismos de proteção contra invazoes, vazamento de dados e acessos não autorizados, ultilizando sistemas de criptografia, altenticadores e sistemas de monitoramento.
+- Deve ser realizada pelo menos uma auditoria de segurança externa anualmente, com relatório de vulnerabilidades e plano de correção.
+
+### 7.5 Contábeis
+- O sistema deve registrar todas as movimentações de estoque com data, hora e usuário responsável, garantindo rastreabilidade completa para fins contábeis.
+- O sistema deve permitir a exportação dos dados de movimentação em formatos compatíveis com ferramentas contábeis (CSV e Excel).
 
 ---
