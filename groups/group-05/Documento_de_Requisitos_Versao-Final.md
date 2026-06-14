@@ -261,18 +261,71 @@ O dashboard deve ser a primeira tela exibida após o login. Deve ser carregado e
 ##  8. Arquitetura do Sistema
 
 ### 8.1 Visão Geral
-Descreva a arquitetura (ex: monolito, microserviços).
+O StockFácil adota uma arquitetura monolítica modular, onde frontend e backend são desenvolvidos de forma separada, mas implantados em um único servidor de aplicação. Essa abordagem foi escolhida por ser adequada ao porte inicial da plataforma e simplificar o processo de desenvolvimento, manutenção e deploy. A separação clara entre camadas garante coesão interna e facilita a evolução futura para microsserviços, caso a escala da aplicação exija.
+A aplicação segue o padrão de três camadas (three-tier architecture):
+- Camada de Apresentação (Frontend): interface web responsiva acessada pelo navegador.
+- Camada de Aplicação (Backend): lógica de negócio, APIs RESTful e controle de autenticação.
+- Camada de Dados (Banco de Dados): armazenamento persistente de todas as entidades do sistema.
 
 ### 8.2 Componentes
-- Frontend  
-- Backend  
-- Banco de dados  
-- APIs externas  
+### Frontend
+renderizar a interface do usuário e consumir a API REST do backend. A comunicação ocorre via HTTPS com troca de tokens JWT para autenticação. O frontend é servido por um servidor de arquivos estáticos (ex.: Nginx) e é totalmente responsivo, compatível com dispositivos móveis, tablets e desktops.
+Principais módulos do frontend:
+- Módulo de Autenticação: login, recuperação de senha e controle de sessão.
+- Dashboard: painel de indicadores em tempo real com gráficos e KPIs.
+- Módulo de Produtos: cadastro, edição, exclusão e busca de produtos.
+- Módulo de Movimentações: registro de entradas e saídas, histórico e estornos.
+- Módulo de Fornecedores: CRUD de fornecedores com produtos associados.
+- Módulo de Relatórios: geração e exportação em PDF e CSV.
+- Módulo de Usuários: gerenciamento de perfis e permissões de acesso.
+### Backend  
+O backend é uma API RESTful desenvolvida em Node.js com o framework Express.js. Ele encapsula todas as regras de negócio do sistema, valida dados de entrada, aplica controle de acesso por perfil (RBAC – Role-Based Access Control) e persiste informações no banco de dados. A comunicação com o frontend é stateless, utilizando tokens JWT com expiração configurada em 8 horas.
+Principais serviços do backend:
+- Auth Service: emissão, validação e renovação de tokens JWT.
+- User Service: CRUD de usuários com controle de perfis (admin, operador, visualizador).
+- Product Service: gerenciamento de produtos, categorias e SKUs.
+- Stock Service: registro de movimentações, cálculo de saldos e alertas automáticos.
+- Supplier Service: gerenciamento de fornecedores.
+- Report Service: consolidação de dados e geração de relatórios em PDF/CSV.
+- Notification Service: disparo de alertas de estoque mínimo e máximo por e-mail ou notificação in-app.
+### Banco de dados  
+O sistema utiliza o PostgreSQL como banco de dados relacional principal, hospedado em um serviço gerenciado na nuvem (ex.: Amazon RDS ou Cloud SQL). O modelo relacional foi escolhido pela natureza estruturada dos dados e pela necessidade de transações atômicas nas operações de movimentação de estoque.
+
+
+| Entidade | Descrição | Relacionamentos Principais |
+|---|---|---|
+| Usuario | Dados de autenticação e perfil de acesso | Movimentacoes, Logs |
+| Produto | Catálogo de produtos com SKU, categoria e custo | Movimentacoes, Fornecedor, LocalEstoque |
+| Movimentacao | Registro de entradas e saídas de estoque | Produto, Usuario |
+| Fornecedor | Dados de fornecedores com CNPJ e contato | Produto |
+| LocalEstoque | Filiais e depósitos da empresa | Produto, Movimentacao |
+| AlertaEstoque | Registros de alertas gerados automaticamente | Produto |
+| LogAuditoria | Histórico de ações críticas para auditoria | Usuario |
+
+---
+
+### APIs externas  
+O StockFácil integra as seguintes APIs e serviços externos:
+- Serviço de E-mail (SendGrid ou AWS SES): envio de e-mails transacionais para recuperação de senha e alertas de estoque.
+- Serviço de Armazenamento em Nuvem (AWS S3 ou Google Cloud Storage): armazenamento de arquivos importados e relatórios exportados.
+- Serviço de Monitoramento (Datadog ou AWS CloudWatch): monitoramento de disponibilidade, desempenho e alertas de incidentes.
+- Serviço de Autenticação SMTP: para envio de notificações automáticas.
 
 ### 8.3 Tecnologias
-- Linguagem  
-- Framework  
-- Banco de dados  
+| Camada | Tecnologia | Justificativa |
+|---|---|---|
+| Frontend | React.js + TypeScript | Ecossistema maduro, componentização e tipagem segura |
+| Estilização | Tailwind CSS | Design responsivo com produtividade e consistência visual |
+| Backend | Node.js + Express.js | Alta performance I/O, ampla comunidade, JSON nativo |
+| Banco de Dados | PostgreSQL 15 | Transações ACID, confiabilidade e suporte a JSON |
+| ORM | Prisma ORM | Type-safe, migrations automáticas e produtividade de desenvolvimento |
+| Autenticação | JWT + bcrypt | Padrão do mercado para APIs stateless e hash seguro de senhas |
+| Cache | Redis | Cache de sessões, filas de alertas e dados do dashboard |
+| Servidor Web | Nginx | Proxy reverso, servir estáticos e TLS termination |
+| Infraestrutura | AWS (EC2, RDS, S3, CloudWatch) | Alta disponibilidade, escalabilidade gerenciada e SLAs confiáveis |
+| CI/CD | GitHub Actions | Automação de testes, build e deploy integrados ao GitFlow |
+| Contêineres | Docker + Docker Compose | Padronização de ambientes e facilidade de deploy |
+| Documentação API | Swagger / OpenAPI 3.0 | Conformidade com o requisito RO-DEV e autodocumentação |
 
 ### 8.4 Decisões Arquiteturais
 Explique como a arquitetura atende aos requisitos não funcionais:
