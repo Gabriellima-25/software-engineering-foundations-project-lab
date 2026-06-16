@@ -328,10 +328,11 @@ O StockFácil integra as seguintes APIs e serviços externos:
 | Documentação API | Swagger / OpenAPI 3.0 | Conformidade com o requisito RO-DEV e autodocumentação |
 
 ### 8.4 Decisões Arquiteturais
-Explique como a arquitetura atende aos requisitos não funcionais:
-- Desempenho  
-- Segurança  
-- Escalabilidade  
+A arquitetura escolhida reflete diretamente o atendimento aos Requisitos Não Funcionais (RNFs) mais críticos descritos no projeto:
+- •	**Desempenho:** Para cumprir a meta de respostas a requisições e buscas em menos de 1 ou 2 segundos, a comunicação entre o Frontend e o Backend utiliza dados leves no formato JSON, aliados a técnicas de indexação de chaves (como o código SKU) e paginação de consultas no PostgreSQL para otimizar a memória. 
+- •	**Segurança:** O isolamento do Backend garante a interceptação de acessos por meio de tokens de sessão que expiram obrigatoriamente após 8 horas. A camada de dados protege informações confidenciais exigindo a criptografia de senhas através de bcrypt com salt antes de persistir no banco, além de trafegar os pacotes exclusivamente via túnel criptografado HTTPS (TLS 1.2 ou superior). 
+- •	**Escalabilidade:** A separação completa do Frontend e do Backend permite que o servidor de aplicação atue de forma stateless (sem estado). Isso viabiliza a escalabilidade horizontal, permitindo acrescentar novas instâncias em servidores Linux caso o volume de requisições ultrapasse a capacidade nominal dos planos iniciais gratuitos.
+ 
 
 ---
 
