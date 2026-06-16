@@ -328,13 +328,27 @@ O StockFácil integra as seguintes APIs e serviços externos:
 | Documentação API | Swagger / OpenAPI 3.0 | Conformidade com o requisito RO-DEV e autodocumentação |
 
 ### 8.4 Decisões Arquiteturais
-A arquitetura escolhida reflete diretamente o atendimento aos Requisitos Não Funcionais (RNFs) mais críticos descritos no projeto:
-- •	**Desempenho:** Para cumprir a meta de respostas a requisições e buscas em menos de 1 ou 2 segundos, a comunicação entre o Frontend e o Backend utiliza dados leves no formato JSON, aliados a técnicas de indexação de chaves (como o código SKU) e paginação de consultas no PostgreSQL para otimizar a memória. 
-- •	**Segurança:** O isolamento do Backend garante a interceptação de acessos por meio de tokens de sessão que expiram obrigatoriamente após 8 horas. A camada de dados protege informações confidenciais exigindo a criptografia de senhas através de bcrypt com salt antes de persistir no banco, além de trafegar os pacotes exclusivamente via túnel criptografado HTTPS (TLS 1.2 ou superior). 
-- •	**Escalabilidade:** A separação completa do Frontend e do Backend permite que o servidor de aplicação atue de forma stateless (sem estado). Isso viabiliza a escalabilidade horizontal, permitindo acrescentar novas instâncias em servidores Linux caso o volume de requisições ultrapasse a capacidade nominal dos planos iniciais gratuitos.
- 
+Esta seção descreve como as escolhas tecnológicas e o modelo de arquitetura adotados para o StockFácil atendem diretamente aos Requisitos Não Funcionais (RNFs) de Desempenho, Segurança e Escalabilidade estabelecidos para a plataforma. 
 
----
+- •	**Desempenho:**
+- A arquitetura do StockFácil foi projetada para garantir que as operações de busca ocorram em menos de 1 segundo e o carregamento do dashboard não ultrapasse 3 segundos. As decisões que sustentam esse RNF incluem: 
+- •	Camada de Cache com Redis: O Redis é utilizado para realizar o cache dos dados consolidados do dashboard e gerenciar as filas de alertas de estoque. Isso evita consultas repetitivas e custosas ao banco de dados relacional a cada novo login, garantindo o carregamento da tela inicial dentro do limite de 3 segundos exigido pelas regras de negócio. 
+- •	Backend Assíncrono com Node.js e Express.js: A escolha do Node.js fornece alta performance em operações de I/O (Entrada/Saída), permitindo que múltiplas requisições simultâneas sejam processadas sem bloqueio da thread principal, o que apoia o RNF de tempo de resposta geral do sistema em até 2 segundos. 
+- •	Servidor Web Nginx: Configurado como proxy reverso e responsável por servir os arquivos estáticos do frontend (React.js) otimizados, além de realizar o TLS termination de forma eficiente, reduzindo a carga de processamento do servidor de aplicação. 
+- •	Estratégias de Banco de Dados: O uso do PostgreSQL 15 combinado com paginação de consultas e compressão de dados minimiza o consumo de memória e acelera o tempo de retorno nas buscas por produtos e históricos de movimentação. 
+ 
+- •	**Segurança:**
+- A proteção dos dados e o controle rigoroso de acessos cumprem as exigências regulatórias (LGPD e Marco Civil) e os RNFs de segurança do sistema: 
+- •	Autenticação Stateless com JWT: O controle de sessão é feito via tokens JWT com tempo de expiração definido em 8 horas de inatividade. A comunicação ocorre obrigatoriamente através do protocolo HTTPS (criptografia em trânsito com TLS 1.2 ou superior) gerenciado pelo Nginx. 
+- •	Criptografia de Senhas com bcrypt: Nenhuma senha é armazenada em texto plano. O sistema aplica a função de hash criptográfico bcrypt com adição de salt no Auth Service do backend antes da persistência no banco de dados. 
+- •	Controle de Acesso Baseado em Perfis (RBAC): O User Service aplica de maneira rígida o controle de permissões em nível de API, bloqueando ações críticas (como criação de usuários e exclusão de produtos) para perfis que não sejam "Administrador". 
+- •	Transações Atômicas (ACID) e Logs de Auditoria: Para mitigar falhas e garantir a confiabilidade, o Prisma ORM e o PostgreSQL asseguram transações atômicas nas movimentações de estoque (se uma etapa falhar, toda a operação é revertida). Além disso, ações críticas geram logs estruturados em formato JSON para auditoria imediata. 
+ 
+- •	**Escalabilidade:**
+- Embora o sistema adote uma arquitetura monolítica modular inicial devido ao porte do projeto, ele possui bases sólidas para escala horizontal e isolamento de componentes: 
+- •	Modularidade e Separação de Responsabilidades: O backend é dividido internamente em serviços independentes bem definidos (Product Service, Stock Service, Notification Service, etc.). Essa separação clara de camadas facilita uma eventual transição futura para uma arquitetura de microsserviços caso a demanda cresça exponencialmente. 
+- •	Arquitetura Stateless e Balanceamento de Carga: Como o backend não armazena o estado das sessões dos usuários (fator garantido pelo uso de JWT), a aplicação pode ser facilmente duplicada em múltiplas instâncias na infraestrutura de nuvem (AWS EC2) atrás de um balanceador de carga. Isso garante o suporte ao RNF de até 500 usuários simultâneos sem degradação do ambiente. 
+- •	Uso de Serviços Gerenciados: A delegação de armazenamento de arquivos (relatórios e CSVs) para o AWS S3 e o uso de banco de dados gerenciado (Amazon RDS) retiram o gargalo de armazenamento do servidor principal, permitindo que o espaço em disco e a capacidade de processamento de dados cresçam de forma elástica.
 
 ---
 
