@@ -617,6 +617,7 @@ A estratégia de testes do StockFácil combina testes automatizados e manuais, a
 **Descrição:**  Verificar se o sistema impede a exclusão do único administrador ativo.
 **Entrada:**  Tentativa de exclusão do último usuário com perfil "administrador".
 **Resultado esperado:** Sistema bloqueia a ação e exibe mensagem informando que deve haver ao menos um administrador ativo.
+
 ---
 
 ### 10.4 Testes de Requisitos Não Funcionais
