@@ -567,7 +567,12 @@ Os diagramas podem ser feitos utilizando:
 ##  10. Plano de Testes
 
 ### 10.1 Estratégia de Teste
-Como o sistema será testado?
+A estratégia de testes do StockFácil combina testes automatizados e manuais, aplicados em diferentes níveis do sistema:
+- Testes unitários cobrem as regras de negócio isoladas (ex.: cálculo de saldo, validação de SKU único), executados a cada commit via CI/CD (GitHub Actions).
+- Testes de integração validam a comunicação entre os serviços do backend e o banco de dados (ex.: registro de movimentação com atualização de saldo em transação atômica).
+- Testes de sistema validam fluxos completos ponta a ponta (login → cadastro de produto → movimentação → relatório).
+- Testes de aceitação são conduzidos com usuários representativos (operadores e administradores) para validar usabilidade e aderência aos requisitos funcionais antes da liberação em produção.
+- A cobertura mínima exigida é de 80% nas funcionalidades críticas (FR04, FR06, FR11), conforme RO-DEV.
 
 ### 10.2 Tipos de Teste
 - Unitário  
@@ -577,18 +582,57 @@ Como o sistema será testado?
 
 ### 10.3 Casos de Teste
 
-#### CT01 - Nome
+#### CT01 - Cadastro de Usuário com E-mail Duplicado
 **Requisito relacionado:** RF01  
-**Descrição:**  
-**Entrada:**  
-**Resultado esperado:**  
+**Descrição:**  Verificar se o sistema impede o cadastro de dois usuários com o mesmo e-mail.
+**Entrada:**  E-mail já existente no sistema.
+**Resultado esperado:**   Sistema rejeita o cadastro e exibe mensagem de erro indicando e-mail duplicado.
 
+#### CT02 - Registro de Saída Maior que o Saldo Disponível
+**Requisito relacionado:** RF04 
+**Descrição:**   Verificar se o sistema bloqueia uma saída de estoque superior ao saldo atual do produto.
+**Entrada:**  Produto com saldo de 10 unidades; tentativa de saída de 15 unidades.
+**Resultado esperado:**  Sistema impede a operação e exibe mensagem de saldo insuficiente.
+
+#### CT03 -  Disparo de Alerta de Estoque Mínimo
+**Requisito relacionado:** RF06
+**Descrição:**  Verificar se o alerta é gerado quando o saldo atinge o limite mínimo configurado.
+**Entrada:**  Produto com mínimo configurado em 5 unidades; saída que leva o saldo a 4 unidades.
+**Resultado esperado:**  Sistema gera o alerta automaticamente e não duplica o envio caso outra saída ocorra na mesma hora.
+
+#### CT04 -  Geração de Relatório com Período Superior a 12 Meses
+**Requisito relacionado:** RF07
+**Descrição:** Verificar se o sistema solicita confirmação ao gerar relatório de período extenso.
+**Entrada:**  Filtro de data com intervalo de 14 meses.
+**Resultado esperado:**   Sistema exibe alerta de confirmação antes de processar o relatório.
+
+#### CT05 - Carregamento do Dashboard em até 3 Segundos
+**Requisito relacionado:** RF11 
+**Descrição:**  Verificar o tempo de carregamento do dashboard após login.
+**Entrada:**  Login de usuário com dados consolidados em cache (Redis).
+**Resultado esperado:**  Dashboard carregado em no máximo 3 segundos.
+
+#### CT06 -  Exclusão do Último Administrador Ativo
+**Requisito relacionado:** RF01  
+**Descrição:**  Verificar se o sistema impede a exclusão do único administrador ativo.
+**Entrada:**  Tentativa de exclusão do último usuário com perfil "administrador".
+**Resultado esperado:** Sistema bloqueia a ação e exibe mensagem informando que deve haver ao menos um administrador ativo.
 ---
 
 ### 10.4 Testes de Requisitos Não Funcionais
-- Performance (tempo de resposta)  
-- Segurança  
-- Usabilidade  
+## Performance:
+- Testes de carga simulando até 500 usuários simultâneos (ferramenta sugerida: k6 ou JMeter), validando tempo de resposta ≤ 2s.
+= Teste de tempo de busca/filtro de produtos, validando retorno ≤ 1s.
 
+## Segurança:
+- Teste de força bruta simulando 5+ tentativas de login incorretas, validando bloqueio automático da conta.
+- Verificação de que senhas são armazenadas com hash bcrypt (nunca em texto plano).
+- Teste de acesso indevido: usuário com perfil "visualizador" tentando excluir produto deve ser bloqueado (RBAC).
+- Verificação de uso obrigatório de HTTPS/TLS em todas as requisições.
+
+## Usabilidade:
+- Teste de fluxo de registro de movimentação, validando conclusão em até 3 cliques a partir do menu principal.
+- Teste de responsividade em resoluções mobile, tablet e desktop.
+- Verificação de conformidade com WCAG 2.1 nível AA (contraste, navegação por teclado, leitores de tela).
 ---
 
